@@ -8,7 +8,9 @@ We provide the template files for the motion data of Go2 and H1 in Google Drive.
 - [H1 Template](https://drive.google.com/file/d/1ZICQdzsb8vNpvwAhrjVBHu3adQ_HAB2z/view?usp=sharing)
 
 ## Usage
+
 这部分后面我会修改，我目前只是复现完成了，还没有加自己的东西进去
+
 First, record the motion data in mujoco, save `qpos` to `.npy` file.
 
 Next, run the converting script to get the blender-compatible `.npy` file.
@@ -76,7 +78,7 @@ python convert_state_go2.py
 ## TODO
 
 - [x] 复现原文效果
-- [ ] 加一下在Isaac Gym里面收集保存数据的代码
+- [x] 加一下在Isaac Gym里面收集保存数据的代码
 - [ ] 弄一下狗加臂的XML文件
 - [ ] 弄清楚在blender中加箱子
 - [ ] blender中的狗加臂的Template文件
