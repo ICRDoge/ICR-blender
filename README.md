@@ -45,19 +45,19 @@ sudo ln -s blender /usr/local/bin/blender
 2. 创建虚拟环境
 在blender-3.6.1中自带的python版本是3.10，但是在blender里面很难配置环境，比如安装一些包，所以我们用虚拟环境来代替
 ```bash
-# 环境名字可以自己取，这里我就用‘blenderpy代替了’
+# 环境名字可以自己取，这里我就用'blenderpy'代替了
 conda create -n blenderpy python==3.10
 conda activate blenderpy
 pip install matplotlib
 which python
 ```
-记录一下上面的输出路径,我的是 ‘/home/yhy/anaconda3/envs/blender/bin/python’
+记录一下上面的输出路径,我的是 */home/yhy/anaconda3/envs/blender/bin/python*
 ```bash
 cd ~/Downloads/blender-3.6.1-linux-x64/3.6/python/bin
 rm python3.10
 sudo ln -s /home/yhy/anaconda3/envs/blender/bin/python python3.10
 ```
-最后在[代码](https://github.com/ICRDoge/ICR-blender/blob/main/import_blender_go2.py#L3)中改成自己的路径
+最后在[这行代码](https://github.com/ICRDoge/ICR-blender/blob/main/import_blender_go2.py#L3)中改成自己的路径
 
 3. blender内部操作
 在进入blender之前，先按照前面的教程下载[Go2 Template](https://drive.google.com/file/d/1P5khZuAXrZJd7vPlD8zfjrtDuKgXGEQD/view?usp=sharing)
@@ -65,10 +65,10 @@ sudo ln -s /home/yhy/anaconda3/envs/blender/bin/python python3.10
 ```bash
 python convert_state_go2.py
 ```
-打开blender，打开刚才下载的Go2 Template，在上面的一行里面，选择‘scripting’，并打开‘import_blender_go2.py’
+打开blender，打开刚才下载的Go2 Template，在上面的一行里面，选择*scripting*，并打开*import_blender_go2.py*
 点击运行，这时候blender界面应该是卡住不动的，等渲染结束后就恢复了，然后按空格控制暂停切换
 在右下角的打印机图标处，可以设置渲染参数，保存的路径等等
-想保存的话，在左上方‘Rendering’栏里面有‘Render Animation’选项
+想保存的话，在左上方*Rendering*栏里面有*Render Animation*选项
 ![Blender操作说明图](./figs/blender_intro.png)
 
 
