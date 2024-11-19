@@ -70,3 +70,13 @@ python convert_state_go2.py
 在右下角的打印机图标处，可以设置渲染参数，保存的路径等等
 想保存的话，在左上方‘Rendering’栏里面有‘Render Animation’选项
 ![Blender操作说明图](./figs/blender_intro.png)
+
+
+
+## TODO
+
+- [x] 复现原文效果
+- [ ] 加一下在Isaac Gym里面收集保存数据的代码
+- [ ] 弄一下狗加臂的XML文件
+- [ ] 弄清楚在blender中加箱子
+- [ ] blender中的狗加臂的Template文件
