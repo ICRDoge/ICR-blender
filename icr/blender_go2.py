@@ -38,8 +38,8 @@ link_mapper = [
 ]
 # 删除默认 Cube
 
-if "Cube" in bpy.data.objects:
-    bpy.data.objects.remove(bpy.data.objects["Cube"], do_unlink=True)
+# if "Cube" in bpy.data.objects:
+#     bpy.data.objects.remove(bpy.data.objects["Cube"], do_unlink=True)
 
 def import_animation():
     dt = 0.02
@@ -49,28 +49,16 @@ def import_animation():
     Ndownsample = 8 # trajectory downsample rate
     Hdownsample = 4 # frame downsample rate
 
-    exp_idx = 0
-    exp_name = [
-        "dial_real_jump",
-        "dial_real_run",
-        "dial_sim_gallop",
-        "dial_sim_trot",
-        "dial_sim_climb"
-    ][exp_idx]
-    Hrender_start, Hrender_end = [
-        [450, 1850],
-        [150, 1600],
-        [550, 1200],
-        [550, 1200],
-        [0, 80]
-    ][exp_idx]
+    exp_name = "isaac_test"
+    Hrender_start, Hrender_end = [0, 750]
+
+
     Hrender = Hrender_end - Hrender_start
 
-    # file_prefix = r"C:\Users\JC-Ba\Downloads\code\dial-mpc\data"
-    file_prefix = r"/home/yhy/code/legged_rob/dial-mpc/data"
+    file_prefix = r"/home/yhy/code/legged_rob/dial-mpc/icr/blender_input"
 
     link_pos_original = np.load(f"{file_prefix}/{exp_name}_xpos.npy")
-    # print('test = ',link_pos_original.shape)
+    print('test = ',link_pos_original.shape)
     link_quat_wxyz_original = np.load(f"{file_prefix}/{exp_name}_xquat.npy")
     xsite_feet_original = np.load(
         f"{file_prefix}/{exp_name}_xsite_feet.npy"
@@ -88,9 +76,11 @@ def import_animation():
     link_pos = np.transpose(link_pos_original, (1, 0, 2))
     link_quat_xyzw = np.transpose(link_quat_xyzw_original, (1, 0, 2))
     xsite_feet = np.transpose(xsite_feet_original, (1, 0, 2))
+
     # isaac gym is Y-up Right-handed coordinate system
     # blender is  Z-up left-handed coordinate system
     # so we need to convert the quaternion from isaac gym to blender
+    
     yup_to_zup = Euler((np.pi / 2, 0, 0), "XYZ").to_quaternion()
     for obj in bpy.data.objects:
         print(f"Object Name: {obj.name}, Type: {obj.type}")
@@ -100,7 +90,7 @@ def import_animation():
         print(f"Progress: {link_idx}/{len(link_mapper)}")
         print(f"Importing {link_mapper[link_idx]}...")
         link_name = link_mapper[link_idx]
-        if link_name not in bpy.data.objects:#妈的 狗没加进来
+        if link_name not in bpy.data.objects:
             print('hahah')
             continue
         blender_obj = bpy.data.objects[link_name]
@@ -124,6 +114,7 @@ def import_animation():
 
     # generate trajectory to visualize
     # NOTE: please replace it with the actual trajectory
+            
     xssss_torso = np.zeros((Hrender, Ndiffuse, Nsample, Hsample, 3)) 
     xssss_feet = np.zeros((Hrender, Ndiffuse, Nsample, Hsample, 4, 3))
     for i in range(Hrender):
@@ -257,7 +248,7 @@ def import_animation():
                         spline.points[k//Ndownsample].keyframe_insert(data_path="co", frame=frame)
 
     # 定义保存.blend文件的路径
-    blend_file_path = "/home/yhy/trajectory_animation.blend"
+    blend_file_path = "blender_output/trajectory_animation.blend"
 
     # 保存Blender文件
     bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
