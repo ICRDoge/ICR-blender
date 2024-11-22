@@ -1,19 +1,26 @@
 # ICR Blender渲染说明
 
+[!NOTE] If you have any question , please contact me (yhykid@mail.ustc.edu.cn)
+
 ## Tempelate Files
 
 We provide the template files for the motion data of Go2 and H1 in Google Drive.
 
 - [Go2 Template](https://drive.google.com/file/d/1P5khZuAXrZJd7vPlD8zfjrtDuKgXGEQD/view?usp=sharing)
 - [H1 Template](https://drive.google.com/file/d/1ZICQdzsb8vNpvwAhrjVBHu3adQ_HAB2z/view?usp=sharing)
+- [Go2 with D1 Template](https://drive.google.com/file/d/1lkC47UfXXUenqTx0mdVGtsdorQSdZGhU/view?usp=drive_link)
 
 ## Usage
 
-这部分后面我会修改，我目前只是复现完成了，还没有加自己的东西进去
+Blender渲染仿真实验，需要收集[time,pos(xyz),quat(wxyz),dof_pos]，收集数据的代码我放在icr文件夹下了
 
-First, record the motion data in mujoco, save `qpos` to `.npy` file.
+相比于原文，我开发了狗加臂的代码、obj文件、xml文件，完成度应该在90%了，后续可能我会根据我自己的使用情况进行改进
 
-Next, run the converting script to get the blender-compatible `.npy` file.
+如果需要加入新的obj文件和xml文件，我建议不要跟着model文件夹下的README走，因为很多坑，我们可以在网上找个stl to obj或者dae to obj的网址自己转换
+
+转换后可以自己修改代码里面的rotation  
+
+除复现外，实验室用的代码都在icr文件夹下，欢迎使用
 
 ```bash
 # For Go2
@@ -44,7 +51,8 @@ cd blender-3.6.1-linux-x64
 sudo ln -s blender /usr/local/bin/blender 
 # 这样就可以通过终端输入blender打开了，这样在里面运行文件的时候终端可以实时可视化一些log
 ```
-2. 创建虚拟环境
+2. 创建虚拟环境  
+
 在blender-3.6.1中自带的python版本是3.10，但是在blender里面很难配置环境，比如安装一些包，所以我们用虚拟环境来代替
 ```bash
 # 环境名字可以自己取，这里我就用'blenderpy'代替了
@@ -61,7 +69,8 @@ sudo ln -s /home/yhy/anaconda3/envs/blender/bin/python python3.10
 ```
 最后在[这行代码](https://github.com/ICRDoge/ICR-blender/blob/main/import_blender_go2.py#L3)中改成自己的路径
 
-3. blender内部操作
+3. blender内部操作  
+
 在进入blender之前，先按照前面的教程下载[Go2 Template](https://drive.google.com/file/d/1P5khZuAXrZJd7vPlD8zfjrtDuKgXGEQD/view?usp=sharing)
 并且运行
 ```bash
@@ -74,11 +83,14 @@ python convert_state_go2.py
 ![Blender操作说明图](./figs/blender_intro.png)
 
 
+4. 添加箱子
 
+在blender里面的Animation界面按下*Shift + A*，选择你想添加的东西即可
 ## TODO
 
 - [x] 复现原文效果
 - [x] 加一下在Isaac Gym里面收集保存数据的代码
-- [ ] 弄一下狗加臂的XML文件
-- [ ] 弄清楚在blender中加箱子
-- [ ] blender中的狗加臂的Template文件
+- [x] 弄一下狗加臂的XML文件
+- [x] 弄清楚在blender中加箱子
+- [x] blender中的狗加臂的Template文件
+- [ ] 装逼

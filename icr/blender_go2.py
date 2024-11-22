@@ -58,7 +58,7 @@ def import_animation():
     file_prefix = r"/home/yhy/code/legged_rob/dial-mpc/icr/blender_input"
 
     link_pos_original = np.load(f"{file_prefix}/{exp_name}_xpos.npy")
-    print('test = ',link_pos_original.shape)
+    # print('test = ',link_pos_original.shape)
     link_quat_wxyz_original = np.load(f"{file_prefix}/{exp_name}_xquat.npy")
     xsite_feet_original = np.load(
         f"{file_prefix}/{exp_name}_xsite_feet.npy"
@@ -80,7 +80,7 @@ def import_animation():
     # isaac gym is Y-up Right-handed coordinate system
     # blender is  Z-up left-handed coordinate system
     # so we need to convert the quaternion from isaac gym to blender
-    
+
     yup_to_zup = Euler((np.pi / 2, 0, 0), "XYZ").to_quaternion()
     for obj in bpy.data.objects:
         print(f"Object Name: {obj.name}, Type: {obj.type}")
@@ -111,7 +111,7 @@ def import_animation():
 
             if frame_idx > Hrender:
                 break
-
+    #! 如果不需要线状轨迹动画的话 ， 可以把下列代码去掉
     # generate trajectory to visualize
     # NOTE: please replace it with the actual trajectory
             
