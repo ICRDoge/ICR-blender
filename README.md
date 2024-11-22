@@ -1,6 +1,7 @@
 # ICR Blender渲染说明
 
-[!NOTE] If you have any question , please contact me (yhykid@mail.ustc.edu.cn)
+> [!NOTE] 
+> If you have any question , please contact me (yhykid@mail.ustc.edu.cn)
 
 ## Tempelate Files
 
