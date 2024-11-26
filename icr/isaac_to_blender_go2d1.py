@@ -44,7 +44,7 @@ def convert_state():
     np.save(f"blender_input/{exp_name}_xpos.npy", xpos)
     np.save(f"blender_input/{exp_name}_xquat.npy", xquat)
     np.save(f"blender_input/{exp_name}_xsite_feet.npy", xsite_feet)
-    print(xquat[500,-1,:])
+    # print(xquat[500,-1,:])
     # plot xpos[:, 0, [0,2]], xsite_feet[:, 0, [0,2]], xsite_feet[:, 1, [0,2]], xsite_feet[:, 2, [0,2]], xsite_feet[:, 3, [0,2]]
     plt.plot(xpos[:, 0, 0], xpos[:, 0, 2], label="base")
     plt.plot(xsite_feet[:, 0, 0], xsite_feet[:, 0, 2], label="FR_foot")

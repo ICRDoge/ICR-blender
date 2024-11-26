@@ -55,7 +55,7 @@ def import_animation():
     Ndiffuse = 4
     Ndownsample = 8 # trajectory downsample rate
     Hdownsample = 4 # frame downsample rate
- # 确保时间轴覆盖 2000 帧
+    # 确保时间轴覆盖 2000 帧
 
     exp_name = "dogarm_test"
     Hrender_start, Hrender_end = [0, 2000]
@@ -130,148 +130,161 @@ def import_animation():
 
             mesh = bpy.data.meshes.new(f"trace_{frame_idx}")
 
-            # if frame_idx > Hrender:
-            #     break
+            if frame_idx > Hrender:
+                break
     #! 如果不需要线状轨迹动画的话 ， 可以把下列代码去掉
     # generate trajectory to visualize
     # NOTE: please replace it with the actual trajectory
             
     # xssss_torso = np.zeros((Hrender, Ndiffuse, Nsample, Hsample, 3)) 
     # xssss_feet = np.zeros((Hrender, Ndiffuse, Nsample, Hsample, 4, 3))
-    # for i in range(Hrender):
-    #     xs_torso_ref = link_pos_original[i + Hrender_start : i + Hrender_start + Hsample, 0]+ np.array([0.35, 0.0, 0.0])
-    #     xs_feet_ref = xsite_feet_original[i + Hrender_start : i + Hrender_start + Hsample]
-    #     for j in range(Ndiffuse):
-    #         sigma = 0.1 * (0.5**j)
-    #         xssss_torso[i, j] = (
-    #             xs_torso_ref + np.random.randn(Nsample, Hsample, 3) * sigma
-    #         )
-    #         xssss_feet[i, j] = (
-    #             xs_feet_ref + np.random.randn(Nsample, Hsample, 4, 3) * sigma
-    #         )
-    #         # go through low-pass filter
-    #         alpha = 0.2
-    #         for k in range(1, Hsample):
-    #             xssss_torso[i, j, :, k] = alpha * xssss_torso[i, j, :, k] + (1 - alpha) * xssss_torso[i, j, :, k-1]
-    #             xssss_feet[i, j, :, k] = alpha * xssss_feet[i, j, :, k] + (1 - alpha) * xssss_feet[i, j, :, k-1]
+    xssss_ee = np.zeros((Hrender, Ndiffuse, Nsample, Hsample, 3)) 
+
+    for i in range(Hrender):
+        xs_ee_ref = link_pos_original[i + Hrender_start : i + Hrender_start + Hsample, -1] 
+        # xs_ee_ref = [yup_to_zup @ Vector(pos.tolist()) for pos in xs_ee_ref]
+
+        xs_torso_ref = link_pos_original[i + Hrender_start : i + Hrender_start + Hsample, 0]+ np.array([0.35, 0.0, 0.0])
+        xs_feet_ref = xsite_feet_original[i + Hrender_start : i + Hrender_start + Hsample]
+        for j in range(Ndiffuse):
+            sigma = 0.1 * (0.5**j)
+            # xssss_torso[i, j] = (
+            #     xs_torso_ref + np.random.randn(Nsample, Hsample, 3) * sigma
+            # )
+            xssss_ee[i, j] = (
+                xs_ee_ref + np.random.randn(Nsample, Hsample, 3) * sigma
+            )
+            # xssss_feet[i, j] = (
+            #     xs_feet_ref + np.random.randn(Nsample, Hsample, 4, 3) * sigma
+            # )
+            # go through low-pass filter
+            alpha = 0.2
+            for k in range(1, Hsample):
+                # xssss_torso[i, j, :, k] = alpha * xssss_torso[i, j, :, k] + (1 - alpha) * xssss_torso[i, j, :, k-1]
+                xssss_ee[i, j, :, k] = alpha * xssss_ee[i, j, :, k] + (1 - alpha) * xssss_ee[i, j, :, k-1]
+                # xssss_feet[i, j, :, k] = alpha * xssss_feet[i, j, :, k] + (1 - alpha) * xssss_feet[i, j, :, k-1]
 
     # # visualize the trajectory
-    # t0 = time.time()
-    # for i in range(Ndiffuse):
+    t0 = time.time()
+    for i in range(Ndiffuse):
 
-    #     # create material according to Ndiffuse (i=0, it is light red, i=Ndiffuse-1, it is dark red)
-    #     # Create a new material and assign a color
-    #     material = bpy.data.materials.new(name=f"diffuse_material_{i}")
-    #     k = i / (Ndiffuse - 1)
-    #     # color from light red to dark red
-    #     red = np.array([1, 0, 0, 1.0])
-    #     white = np.array([1, 1, 1, 0.1])
-    #     color = (1-k) * white + k * red
-    #     material.diffuse_color = color  # RGBA values
+        # create material according to Ndiffuse (i=0, it is light red, i=Ndiffuse-1, it is dark red)
+        # Create a new material and assign a color
+        material = bpy.data.materials.new(name=f"diffuse_material_{i}")
+        k = i / (Ndiffuse - 1)
+        # color from light red to dark red
+        red = np.array([1, 0, 0, 1.0])
+        white = np.array([1, 1, 1, 0.1])
+        color = (1-k) * white + k * red
+        material.diffuse_color = color  # RGBA values
 
-    #     # Enable 'Use Nodes' to access material nodes
-    #     material.use_nodes = True
-    #     nodes = material.node_tree.nodes
-    #     principled_bsdf = nodes.get("Principled BSDF")
-    #     if principled_bsdf:
-    #         principled_bsdf.inputs["Base Color"].default_value = color
-    #         principled_bsdf.inputs['Emission'].default_value = color  # Emission color (optional)
-    #     for j in range(Nsample):
-    #         Ntraj = 5
-    #         traj_names = ["torso", "FL_foot", "FR_foot", "RL_foot", "RR_foot"]
-    #         for k, traj_name in enumerate(traj_names):
-    #             # Create a new curve data-block
-    #             curve_data = bpy.data.curves.new(
-    #                 name=f"{traj_name}_diffuse{i}_sample{j}", type="CURVE"
-    #             )
-    #             delta_t = time.time() - t0
-    #             total_exp = Ndiffuse*Nsample*Ntraj
-    #             current_exp = i*Nsample*Ntraj + j*Ntraj + k + 1
-    #             elapsed_time = delta_t
-    #             left_time = (total_exp - current_exp) * elapsed_time / current_exp
-    #             print(f"total progress: {i*Nsample*Ntraj + j*Ntraj + k}/{Ndiffuse*Nsample*Ntraj}, left time: {left_time:.2f}s, elapsed time: {elapsed_time:.2f}s")
-    #             print(f"Creating {traj_name}_diffuse{i}_sample{j}...")
-    #             curve_data.dimensions = "3D"
+        # Enable 'Use Nodes' to access material nodes
+        material.use_nodes = True
+        nodes = material.node_tree.nodes
+        principled_bsdf = nodes.get("Principled BSDF")
+        if principled_bsdf:
+            principled_bsdf.inputs["Base Color"].default_value = color
+            principled_bsdf.inputs['Emission'].default_value = color  # Emission color (optional)
+        for j in range(Nsample):
+            Ntraj = 5
+            # traj_names = ["torso", "FL_foot", "FR_foot", "RL_foot", "RR_foot"]
+            traj_names = ["d1_Link6"]
+            for k, traj_name in enumerate(traj_names):
+                # Create a new curve data-block
+                curve_data = bpy.data.curves.new(
+                    name=f"{traj_name}_diffuse{i}_sample{j}", type="CURVE"
+                )
+                delta_t = time.time() - t0
+                total_exp = Ndiffuse*Nsample*Ntraj
+                current_exp = i*Nsample*Ntraj + j*Ntraj + k + 1
+                elapsed_time = delta_t
+                left_time = (total_exp - current_exp) * elapsed_time / current_exp
+                print(f"total progress: {i*Nsample*Ntraj + j*Ntraj + k}/{Ndiffuse*Nsample*Ntraj}, left time: {left_time:.2f}s, elapsed time: {elapsed_time:.2f}s")
+                print(f"Creating {traj_name}_diffuse{i}_sample{j}...")
+                curve_data.dimensions = "3D"
 
-    #             # Adjust the bevel depth to make the curve thicker
-    #             curve_data.bevel_depth = (
-    #                 0.002  # Adjust this value for desired thickness
-    #             )
-    #             curve_data.fill_mode = "FULL"  # Ensures the curve is fully filled
+                # Adjust the bevel depth to make the curve thicker
+                curve_data.bevel_depth = (
+                    0.002  # Adjust this value for desired thickness
+                )
+                curve_data.fill_mode = "FULL"  # Ensures the curve is fully filled
 
-    #             # Create a new basal spline in that curve
-    #             spline = curve_data.splines.new(type="NURBS")
-    #             if Hsample % Ndownsample == 0:
-    #                 spline.points.add(Hsample//Ndownsample)  # Add points (minus the default point)
-    #             else:
-    #                 spline.points.add(Hsample//Ndownsample-1)  # Add points (minus the default point)
-    #             spline.use_cyclic_u = False  # Ensure the spline is not cyclic
-    #             spline.order_u = 4  # Order can be between 2 and 6
-    #             spline.resolution_u = 12  # Increase for smoother curves
+                # Create a new basal spline in that curve
+                spline = curve_data.splines.new(type="NURBS")
+                if Hsample % Ndownsample == 0:
+                    spline.points.add(Hsample//Ndownsample)  # Add points (minus the default point)
+                else:
+                    spline.points.add(Hsample//Ndownsample-1)  # Add points (minus the default point)
+                spline.use_cyclic_u = False  # Ensure the spline is not cyclic
+                spline.order_u = 4  # Order can be between 2 and 6
+                spline.resolution_u = 12  # Increase for smoother curves
 
-    #             # Initialize the spline points with the first frame data
-    #             if traj_name == "torso":
-    #                 traj = xssss_torso[:, i, j]
-    #             elif traj_name == "FL_foot":
-    #                 traj = xssss_feet[:, i, j, :, 0]
-    #             elif traj_name == "FR_foot":
-    #                 traj = xssss_feet[:, i, j, :, 1]
-    #             elif traj_name == "RL_foot":
-    #                 traj = xssss_feet[:, i, j, :, 2]
-    #             elif traj_name == "RR_foot":
-    #                 traj = xssss_feet[:, i, j, :, 3]
-    #             for p in range(Hsample):
-    #                 if p % Ndownsample != 0:
-    #                     continue
-    #                 x, y, z = traj[0, p]
-    #                 spline.points[p//Ndownsample].co = (x, y, z, 1)  
+                # Initialize the spline points with the first frame data
+                if traj_name == "torso":
+                    traj = xssss_torso[:, i, j]
+                elif traj_name == "FL_foot":
+                    traj = xssss_feet[:, i, j, :, 0]
+                elif traj_name == "FR_foot":
+                    traj = xssss_feet[:, i, j, :, 1]
+                elif traj_name == "RL_foot":
+                    traj = xssss_feet[:, i, j, :, 2]
+                elif traj_name == "RR_foot":
+                    traj = xssss_feet[:, i, j, :, 3]
+                elif traj_name == "d1_Link6":
+                    traj = xssss_ee[:, i, j]
+                    # traj += np.array([0, 0, 0.5])
+                for p in range(Hsample):
+                    if p % Ndownsample != 0:
+                        continue
+                    x, y, z = traj[0, p]
+                    spline.points[p//Ndownsample].co = (x, y, z, 1)  
 
 
 
 
 
-                # Set the order of the NURBS spline (degree + 1)
+                #Set the order of the NURBS spline (degree + 1)
                 # spline.order_u = min(4, Hsample)  # Order cannot exceed number of points
                 # spline.use_endpoint_u = True
 
 
-                # Create a new object with the curve data
-                # curve_object = bpy.data.objects.new(
-                #     f"{traj_name}_diffuse{i}_sample{j}", curve_data
-                # )
+                #Create a new object with the curve data
+                curve_object = bpy.data.objects.new(
+                    f"{traj_name}_diffuse{i}_sample{j}", curve_data
+                )
 
 
-                # # Link the object to the current collection
-                # bpy.context.collection.objects.link(curve_object)
+                # Link the object to the current collection
+                bpy.context.collection.objects.link(curve_object)
 
-                # # Assign the material to the curve object
-                # if curve_object.data.materials:
-                #     # Assign to first material slot
-                #     curve_object.data.materials[0] = material
-                # else:
-                #     # Create a new material slot and assign
-                #     curve_object.data.materials.append(material)
+                # Assign the material to the curve object
+                if curve_object.data.materials:
+                    # Assign to first material slot
+                    curve_object.data.materials[0] = material
+                else:
+                    # Create a new material slot and assign
+                    curve_object.data.materials.append(material)
 
-                # # Animate the curve by modifying control points over time
-                # for frame in range(Hrender):
-                #     if frame % Hdownsample != 0:
-                #         continue
-                #     bpy.context.scene.frame_set(frame)
-                #     for k in range(Hsample):
-                #         if k % Ndownsample != 0:
-                #             continue
-                #         x, y, z = traj[frame, k]
-                #         spline.points[k//Ndownsample].co = (x, y, z, 1)
+                # Animate the curve by modifying control points over time
+                for frame in range(Hrender):
+                    if frame % Hdownsample != 0:
+                        continue
+                    bpy.context.scene.frame_set(frame)
+                    for k in range(Hsample):
+                        if k % Ndownsample != 0:
+                            continue
+                        x, y, z = traj[frame, k]
+                        spline.points[k//Ndownsample].co = (x, y, z, 1)
                         
 
 
-                #         # Insert keyframe for the point
-                #         spline.points[k//Ndownsample].keyframe_insert(data_path="co", frame=frame)
+                        # Insert keyframe for the point
+                        spline.points[k//Ndownsample].keyframe_insert(data_path="co", frame=frame)
 
-    # 定义保存.blend文件的路径
+    #定义保存.blend文件的路径
     # blend_file_path = "blender_output/trajectory_animation.blend"
 
-    # 保存Blender文件
+    #保存Blender文件
     # bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
 
 

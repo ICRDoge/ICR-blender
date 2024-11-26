@@ -248,10 +248,10 @@ def import_animation():
                         spline.points[k//Ndownsample].keyframe_insert(data_path="co", frame=frame)
 
     # 定义保存.blend文件的路径
-    blend_file_path = "blender_output/trajectory_animation.blend"
+    # blend_file_path = "blender_output/trajectory_animation.blend"
 
     # 保存Blender文件
-    bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
+    # bpy.ops.wm.save_as_mainfile(filepath=blend_file_path)
 
 
 

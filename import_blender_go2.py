@@ -218,9 +218,10 @@ def import_animation():
 
 
 
-                # Set the order of the NURBS spline (degree + 1)
-                # spline.order_u = min(4, Hsample)  # Order cannot exceed number of points
-                # spline.use_endpoint_u = True
+                #! 这两行别解除注释 我真服了花了老子两个小时 
+                    #Set the order of the NURBS spline (degree + 1)
+                #! spline.order_u = min(4, Hsample)  # Order cannot exceed number of points
+                #! spline.use_endpoint_u = True
 
 
                 # Create a new object with the curve data
